@@ -1,6 +1,8 @@
 package com.youzan.yar;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.youzan.yar.protocal.body.packager.Packager;
 import com.youzan.yar.protocal.body.packager.msgpack.MsgPack;
@@ -61,9 +63,8 @@ public class test
 		
 		Client phpClient = new Client("http://10.211.55.4/server.php", Packager.MSGPACK_PACKAGE);
 		String a = "33333";
-		phpClient.call("test", a);
-		
-		
+		Map<String, Object> map = (HashMap<String, Object>)phpClient.call("test", a);
+		System.out.println(map.get("r"));
 	}
 	
 	public static void printHexString(byte[] b)
