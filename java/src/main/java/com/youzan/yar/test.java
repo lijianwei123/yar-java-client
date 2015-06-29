@@ -64,7 +64,7 @@ public class test
 		Client phpClient = new Client("http://10.211.55.4/server.php", Packager.MSGPACK_PACKAGE);
 		String a = "33333";
 		Map<String, Object> map = (HashMap<String, Object>)phpClient.call("test", a);
-		System.out.println(map.get("r"));
+		System.out.println(map.get("r").getClass().getSimpleName());
 	}
 	
 	public static void printHexString(byte[] b)
