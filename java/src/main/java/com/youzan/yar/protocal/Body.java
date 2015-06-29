@@ -1,5 +1,6 @@
 package com.youzan.yar.protocal;
 
+import java.util.Arrays;
 import java.util.jar.Pack200.Packer;
 
 import com.youzan.yar.protocal.body.packager.Packager;
@@ -17,8 +18,8 @@ public class Body
 		if (packager != null) {
 			bodyPackager = packager;
 		}
-		
-		prefix = bodyPackager.getBytes();
+	
+		System.arraycopy(packager.getBytes(), 0, prefix, 0, packager.getBytes().length);
 	}
 	
 	public Packager getPackager()
@@ -26,19 +27,14 @@ public class Body
 		PackagerFactory factory = new PackagerFactory();
 		
 		Packager p = null;
+
 		
-		switch (bodyPackager) {
-			case Packager.MSGPACK_PACKAGE:
+		if (bodyPackager.equals(Packager.MSGPACK_PACKAGE)) {
 				p = factory.getInstance(MsgPack.class);
-			break;
-			
-			case Packager.JSON_PACKAGE:
+		} else if (bodyPackager.equals(Packager.JSON_PACKAGE)) {
 				
-			break;
+		} else if (bodyPackager.equals(Packager.PHP_PACKAGE)) {
 			
-			case Packager.PHP_PACKAGE:
-				
-			break;
 		}
 		return p;
 	}

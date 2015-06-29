@@ -3,20 +3,19 @@ package com.youzan.yar;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 import com.youzan.yar.protocal.Body;
 import com.youzan.yar.protocal.Header;
+import com.youzan.yar.protocal.body.packager.Packager;
+import com.youzan.yar.unit.PackTest;
 
 public class Client {
 	
@@ -61,8 +60,21 @@ public class Client {
 		return call(method, null);
 	}
 	
+	
+	public static void printHexString(byte[] b)
+	{ 
+		for (int i = 0; i < b.length; i++) { 
+			String hex = Integer.toHexString(b[i] & 0xFF); 
+			if (hex.length() == 1) { 
+				hex = '0' + hex;
+			} 
+			System.out.print(hex.toUpperCase()); 
+		}
+		
+		System.out.println();
+	}
 
-	public  Object call(String method, Map params) throws Exception
+	public  Object call(String method, Object params) throws Exception
 	{	
 		if (yarServerUrl == null) {
 			throw new Exception("yarServerUrl为空！");
@@ -72,6 +84,7 @@ public class Client {
 		respHeader = new Header();
 		
 		int headerId = getRandNum();
+		headerId = 2222;
 		header.setHeaderId(headerId);
 		
 		
@@ -82,16 +95,21 @@ public class Client {
 		
 		
 		byte[] bodyData = body.getPackager().pack(map);
+//		printHexString(bodyData);
+//		System.exit(0);
+		
 		header.setHeaderBodyLen(bodyData.length);
 		
-		
 		byteBuf.clear();
-		
 		header.pack(byteBuf);
 		byteBuf.put(body.prefix);
 		byteBuf.put(bodyData);
 		
-		byte[] response = postRawData(byteBuf.array());
+		byteBuf.flip();
+		tmpBytes = new byte[byteBuf.limit()];
+		byteBuf.get(tmpBytes, 0, tmpBytes.length);
+		
+		byte[] response = postRawData(tmpBytes);
 		
 		if (response != null) {
 			
@@ -99,22 +117,23 @@ public class Client {
 			byteBuf.put(response);
 			byteBuf.flip();
 			
+//			printHexString(response);
 			
 			respHeader.unPack(byteBuf);
 			if (respHeader.getHeaderMagicNum() != header.getHeaderMagicNum()) {
 				throw new Exception("magic num error");
 			}
 			
-			byteBuf.get(packager, byteBuf.position(), packager.length);
-			body = new Body(new String(packager, CHARSET_UTF8));
+			Arrays.fill(packager, (byte)0);
+			byteBuf.get(packager, 0, packager.length);
+		
+			body = new Body(new String(packager, CHARSET_UTF8).trim());
 			bodyLen = respHeader.getHeaderBodyLen();
 			
-			tmpBytes = new byte[bodyLen];
-			byteBuf.get(tmpBytes, byteBuf.position(), bodyLen);
+			tmpBytes = new byte[bodyLen - packager.length];
+			byteBuf.get(tmpBytes, 0, tmpBytes.length);
 			
-			map = (Map<String, Object>) body.getPackager().unpack(tmpBytes);
-			
-			return map;
+			return body.getPackager().unpack(tmpBytes);
 		}
 		
 		return null;

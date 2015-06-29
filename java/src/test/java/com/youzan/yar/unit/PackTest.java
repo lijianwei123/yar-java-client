@@ -1,6 +1,5 @@
-package com.youzan.yar;
+package com.youzan.yar.unit;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.youzan.yar.protocal.header.Pack;
@@ -9,11 +8,11 @@ public class PackTest {
 
 	@Test
 	public void testPackLong4() {
-		long l = 55l;
+		int l = 55;
 		
 		System.out.println(Long.toBinaryString(l));
 		
-		printHexString(Pack.packLong4(l));
+		printHexString(Pack.packint4(l));
 		
 	}
 
@@ -23,7 +22,7 @@ public class PackTest {
 		
 		System.out.println(Integer.toBinaryString(i));
 		
-		printHexString(Pack.packInt2(i));
+		printHexString(Pack.packShort2(i));
 	}
 	
 	public static void printHexString(byte[] b)

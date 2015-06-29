@@ -44,8 +44,8 @@ public class Header
 		headerMagicNum = Unpack.readB4(b);
 		headerReserved = Unpack.readB4(b);
 		
-		b.get(headerProvider, b.position(), headerProvider.length);
-		b.get(headerToken, b.position(), headerToken.length);
+		b.get(headerProvider, 0, headerProvider.length);
+		b.get(headerToken, 0, headerToken.length);
 		
 		headerBodyLen = Unpack.readB4(b);
 	}

@@ -1,5 +1,12 @@
 package com.youzan.yar;
 
+import java.nio.ByteBuffer;
+
+import com.youzan.yar.protocal.body.packager.Packager;
+import com.youzan.yar.protocal.body.packager.msgpack.MsgPack;
+import com.youzan.yar.protocal.header.Unpack;
+import com.youzan.yar.unit.PackTest;
+
 public class test
 {	
 	
@@ -13,13 +20,63 @@ public class test
 	
 
 
-	public static void main(String[] args) {
-		test t1 = new test();
-		test2 t2 = new test2();
+	public static void main(String[] args) throws Exception {
 		
-		t1.t(t2);
+//		byte[] s = new byte[4];
+//		s[0] = (byte)0x80;
+//		s[1] = (byte)0xDF;
+//		s[2] = (byte)0xEC;
+//		s[3] = (byte)0x60;
+//		
+//		ByteBuffer b = ByteBuffer.wrap(s);
+//		
+//		int l = Unpack.readB4(b);
+//		
+//		System.out.println(l);
+//		
+//		System.out.println(0x80DFEC60);
+//		
+//		System.exit(0);
 		
-		System.out.println(t2.a);
+//		String bodyPackager = "MSGPACK";
+//		switch (bodyPackager) {
+//			case Packager.MSGPACK_PACKAGE:
+//				System.out.println("lijianwei");
+//			break;
+//			
+//			case Packager.JSON_PACKAGE:
+//				
+//			break;
+//			
+//			case Packager.PHP_PACKAGE:
+//				
+//			break;
+//		}
+//		System.exit(0);
+		
+//		String s = new String("lijianwei");
+//		String s2 = new String("lijianwei");
+//		
+//		System.out.println(s.compareTo(s2));
+		
+		Client phpClient = new Client("http://10.211.55.4/server.php", Packager.MSGPACK_PACKAGE);
+		String a = "33333";
+		phpClient.call("test", a);
+		
+		
+	}
+	
+	public static void printHexString(byte[] b)
+	{ 
+		for (int i = 0; i < b.length; i++) { 
+			String hex = Integer.toHexString(b[i] & 0xFF); 
+			if (hex.length() == 1) { 
+				hex = '0' + hex;
+			} 
+			System.out.print(hex.toUpperCase()); 
+		}
+		
+		System.out.println();
 	}
 }
 
